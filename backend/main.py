@@ -9,7 +9,7 @@ import time
 import os
 import shutil
 import numpy as np
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from traffic_monitor import TrafficMonitor
 from database import engine, get_db, Base
@@ -56,6 +56,42 @@ async def get_stats():
 async def get_logs(db: Session = Depends(get_db), limit: int = 50):
     logs = db.query(TrafficLog).order_by(TrafficLog.timestamp.desc()).limit(limit).all()
     return logs
+
+@app.get("/analytics/daily")
+async def get_daily_analytics(db: Session = Depends(get_db)):
+    # Get logs from last 24 hours
+    since = datetime.utcnow() - timedelta(days=1)
+    logs = db.query(TrafficLog).filter(TrafficLog.timestamp >= since).all()
+    
+    # Hour-by-hour trends
+    trends = {}
+    total_counts = {"Car": 0, "Bike": 0, "Bus": 0, "Truck": 0, "Person": 0}
+    
+    for log in logs:
+        # Round to hour
+        hour_key = log.timestamp.strftime("%H:00")
+        if hour_key not in trends:
+            trends[hour_key] = {"Car": 0, "Bike": 0, "Bus": 0, "Truck": 0, "Person": 0}
+        
+        # Breakdown is JSON dict: {'Car': 2, 'Bike': 1, ...}
+        breakdown = log.vehicle_breakdown or {}
+        for v_type, count in breakdown.items():
+            if v_type in trends[hour_key]:
+                trends[hour_key][v_type] += count
+            if v_type in total_counts:
+                total_counts[v_type] += count
+                
+    # Format trends for chart
+    chart_data = []
+    for hour in sorted(trends.keys()):
+        data_point = {"hour": hour}
+        data_point.update(trends[hour])
+        chart_data.append(data_point)
+        
+    return {
+        "summary": total_counts,
+        "trends": chart_data
+    }
 
 @app.post("/analyze/image")
 async def analyze_image(file: UploadFile = File(...)):

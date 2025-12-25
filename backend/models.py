@@ -6,7 +6,7 @@ class TrafficLog(Base):
     __tablename__ = "traffic_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow, index=True)
     total_vehicles = Column(Integer)
     density_status = Column(String)
     vehicle_breakdown = Column(JSON) # Store dict as JSON

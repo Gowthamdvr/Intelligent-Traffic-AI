@@ -1,11 +1,19 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
 
-DATABASE_URL = "sqlite:///./traffic_data.db"
+load_dotenv()
+
+# Use MySQL if provided in .env, otherwise fallback to SQLite
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./traffic_data.db")
+
+# Handle connection args for SQLite specifically
+connect_args = {"check_same_thread": False} if "sqlite" in DATABASE_URL else {}
 
 engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
+    DATABASE_URL, connect_args=connect_args
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
