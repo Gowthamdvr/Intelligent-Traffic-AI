@@ -11,6 +11,13 @@ This is a real-time traffic monitoring system using **YOLOv8** for vehicle detec
   - Shows real-time analytics (Vehicle counts, Density, Alerts).
   - Premium Dark Mode UI.
 
+<img width="1920" height="1020" alt="Image" src="https://github.com/user-attachments/assets/1bbad3bc-a7e9-41b9-acfd-ecc119c4b4a6" />
+
+<img width="1920" height="1020" alt="Image" src="https://github.com/user-attachments/assets/9ecc6d83-6e34-4971-8df5-00b9f6959bce" />
+
+<img width="1920" height="1020" alt="Image" src="https://github.com/user-attachments/assets/40506a3c-95b8-4a9a-b79d-8898d5380894" />
+
+
 ## Prerequisites
 - Python 3.8+
 - Node.js & npm
